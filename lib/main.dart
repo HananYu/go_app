@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'demo/index.dart';
-import 'demo/splash.dart';
+import 'system/splash.dart';
 import 'system/login.dart';
 
 void main() => runApp(new MyApp());
