@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // final wordPair = WordPair.random();
     return new MaterialApp(
-      title: 'Startup Name Generator1',
+      title: 'main',
       routes: <String, WidgetBuilder>{
         //配置路径
         '/index': (BuildContext context) => new Index(),

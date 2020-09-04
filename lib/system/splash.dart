@@ -18,8 +18,8 @@ class _SplashPage extends State<SplashPage> {
     return new GestureDetector(
       onTap: goToHomePage, //设置页面点击事件
       child: Image.asset(
-        "images/splash.png",
-        fit: BoxFit.fill,
+        "assets/images/splash.png",
+        fit: BoxFit.cover,
       ), //此处fit: BoxFit.cover用于拉伸图片,使图片铺满全屏
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:app/utils/http_request.dart';
+import 'package:toast/toast.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -25,7 +26,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     //设置焦点监听
     _focusNodeUserName.addListener(_focusNodeListener);
     _focusNodePassWord.addListener(_focusNodeListener);
@@ -46,7 +46,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     // 移除焦点监听
     _focusNodeUserName.removeListener(_focusNodeListener);
     _focusNodePassWord.removeListener(_focusNodeListener);
@@ -57,12 +56,12 @@ class _LoginPageState extends State<LoginPage> {
   // 监听焦点
   Future<Null> _focusNodeListener() async {
     if (_focusNodeUserName.hasFocus) {
-      print("用户名框获取焦点");
+      // print("用户名框获取焦点");
       // 取消密码框的焦点状态
       _focusNodePassWord.unfocus();
     }
     if (_focusNodePassWord.hasFocus) {
-      print("密码框获取焦点");
+      // print("密码框获取焦点");
       // 取消用户名框焦点状态
       _focusNodeUserName.unfocus();
     }
@@ -98,14 +97,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
-    print(ScreenUtil().scaleHeight);
+    // print(ScreenUtil().scaleHeight);
     // logo 图片区域
     Widget logoImageArea = new Container(
       alignment: Alignment.topCenter,
       // 设置图片为圆形
       child: ClipRRect(
         child: Image.asset(
-          "images/logo.png",
+          "assets/images/logo.png",
           height: 100,
           width: 100,
           fit: BoxFit.fitWidth,
@@ -115,10 +114,11 @@ class _LoginPageState extends State<LoginPage> {
 
     //输入文本框区域
     Widget inputTextArea = new Container(
-      margin: EdgeInsets.only(left: 20, right: 20),
+      margin: EdgeInsets.only(left: 60, right: 60),
       decoration: new BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          color: Colors.white),
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        // color: Colors.white,
+      ),
       child: new Form(
         key: _formKey,
         child: new Column(
@@ -131,8 +131,16 @@ class _LoginPageState extends State<LoginPage> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: "用户名",
-                hintText: "请输入手机号",
-                prefixIcon: Icon(Icons.person),
+                labelStyle: TextStyle(color: Colors.white),
+                // hintText: "请输入用户名",
+                // hintStyle: TextStyle(color: Colors.white),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                prefixIcon: Icon(
+                  Icons.person,
+                  color: Colors.white,
+                ),
                 //尾部添加清除按钮
                 suffixIcon: (_isShowClear)
                     ? IconButton(
@@ -155,8 +163,15 @@ class _LoginPageState extends State<LoginPage> {
               focusNode: _focusNodePassWord,
               decoration: InputDecoration(
                   labelText: "密码",
-                  hintText: "请输入密码",
-                  prefixIcon: Icon(Icons.lock),
+                  labelStyle: TextStyle(color: Colors.white),
+                  // hintText: "请输入密码",
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  prefixIcon: Icon(
+                    Icons.lock,
+                    color: Colors.white,
+                  ),
                   // 是否显示密码
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -183,10 +198,11 @@ class _LoginPageState extends State<LoginPage> {
 
     // 登录按钮区域
     Widget loginButtonArea = new Container(
-      margin: EdgeInsets.only(left: 20, right: 20),
+      margin: EdgeInsets.only(left: 60, right: 60),
       height: 45.0,
       child: new RaisedButton(
-        color: Colors.blue[300],
+        color: Colors.white70,
+        elevation: 8.0, //按钮下面的阴影
         child: Text(
           "登录",
           style: Theme.of(context).primaryTextTheme.headline,
@@ -198,67 +214,23 @@ class _LoginPageState extends State<LoginPage> {
           //点击登录按钮，解除焦点，回收键盘
           _focusNodePassWord.unfocus();
           _focusNodeUserName.unfocus();
+          DioUtils.getHttp(
+            "/api/getH",
+            onSuccess: (data) {
+              Toast.show(data["msg"], context);
+            },
+            onError: (error) {
+              print(error);
+            },
+          );
+          // if (_formKey.currentState.validate()) {
+          //   //只有输入通过验证，才会执行这里
+          //   _formKey.currentState.save();
 
-          if (_formKey.currentState.validate()) {
-            //只有输入通过验证，才会执行这里
-            _formKey.currentState.save();
-            //todo 登录操作
-            print("$_username + $_password");
-          }
+          //   //todo 登录操作
+          //   print("$_username + $_password");
+          // }
         },
-      ),
-    );
-
-    //第三方登录区域
-    Widget thirdLoginArea = new Container(
-      margin: EdgeInsets.only(left: 20, right: 20),
-      child: new Column(
-        children: <Widget>[
-          new Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Container(
-                width: 80,
-                height: 1.0,
-                color: Colors.grey,
-              ),
-              Text('第三方登录'),
-              Container(
-                width: 80,
-                height: 1.0,
-                color: Colors.grey,
-              ),
-            ],
-          ),
-          new SizedBox(
-            height: 18,
-          ),
-          new Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              IconButton(
-                color: Colors.green[200],
-                // 第三方库icon图标
-                icon: Icon(FontAwesomeIcons.weixin),
-                iconSize: 40.0,
-                onPressed: () {},
-              ),
-              IconButton(
-                color: Colors.green[200],
-                icon: Icon(FontAwesomeIcons.facebook),
-                iconSize: 40.0,
-                onPressed: () {},
-              ),
-              IconButton(
-                color: Colors.green[200],
-                icon: Icon(FontAwesomeIcons.qq),
-                iconSize: 40.0,
-                onPressed: () {},
-              )
-            ],
-          )
-        ],
       ),
     );
 
@@ -271,9 +243,9 @@ class _LoginPageState extends State<LoginPage> {
         children: <Widget>[
           FlatButton(
             child: Text(
-              "忘记密码?",
+              "忘记密码",
               style: TextStyle(
-                color: Colors.blue[400],
+                color: Color.fromRGBO(255, 89, 95, 1),
                 fontSize: 16.0,
               ),
             ),
@@ -284,7 +256,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Text(
               "快速注册",
               style: TextStyle(
-                color: Colors.blue[400],
+                color: Color.fromRGBO(255, 89, 95, 1),
                 fontSize: 16.0,
               ),
             ),
@@ -299,37 +271,52 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       // 外层添加一个手势，用于点击空白部分，回收键盘
       body: new GestureDetector(
-        onTap: () {
-          // 点击空白区域，回收键盘
-          print("点击了空白区域");
-          _focusNodePassWord.unfocus();
-          _focusNodeUserName.unfocus();
-        },
-        child: new ListView(
-          children: <Widget>[
-            new SizedBox(
-              height: ScreenUtil().setHeight(80),
+          onTap: () {
+            // 点击空白区域，回收键盘
+            // print("点击了空白区域");
+            _focusNodePassWord.unfocus();
+            _focusNodeUserName.unfocus();
+          },
+          child: new Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/background.jfif"),
+                fit: BoxFit.cover,
+              ),
             ),
-            logoImageArea,
-            new SizedBox(
-              height: ScreenUtil().setHeight(70),
+            child: new ListView(
+              children: <Widget>[
+                new SizedBox(
+                  height: ScreenUtil().setHeight(150),
+                ),
+                logoImageArea,
+                new SizedBox(
+                  height: ScreenUtil().setHeight(300),
+                ),
+                inputTextArea,
+                new SizedBox(
+                  height: ScreenUtil().setHeight(80),
+                ),
+                loginButtonArea,
+                // new SizedBox(
+                //   height: ScreenUtil().setHeight(60),
+                // ),
+                // new SizedBox(
+                //   height: ScreenUtil().setHeight(600),
+                // ),
+                // bottomArea,
+              ],
             ),
-            inputTextArea,
-            new SizedBox(
-              height: ScreenUtil().setHeight(80),
-            ),
-            loginButtonArea,
-            new SizedBox(
-              height: ScreenUtil().setHeight(60),
-            ),
-            thirdLoginArea,
-            new SizedBox(
-              height: ScreenUtil().setHeight(60),
-            ),
-            bottomArea,
-          ],
-        ),
-      ),
+          )),
     );
   }
 }
+
+// void getHttp() async {
+//   try {
+//     Response response = await Dio().get("http://192.168.99.198:8888/api/getH");
+//     print(response);
+//   } catch (e) {
+//     print(e);
+//   }
+// }
