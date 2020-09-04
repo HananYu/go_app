@@ -214,22 +214,24 @@ class _LoginPageState extends State<LoginPage> {
           //点击登录按钮，解除焦点，回收键盘
           _focusNodePassWord.unfocus();
           _focusNodeUserName.unfocus();
-          DioUtils.getHttp(
-            "/api/getH",
-            onSuccess: (data) {
-              Toast.show(data["msg"], context);
-            },
-            onError: (error) {
-              print(error);
-            },
-          );
-          // if (_formKey.currentState.validate()) {
-          //   //只有输入通过验证，才会执行这里
-          //   _formKey.currentState.save();
 
-          //   //todo 登录操作
-          //   print("$_username + $_password");
-          // }
+          if (_formKey.currentState.validate()) {
+            //只有输入通过验证，才会执行这里
+            _formKey.currentState.save();
+
+            DioUtils.postHttp(
+              "/api/basic/login",
+              onSuccess: (data) {
+                Toast.show(data["msg"], context);
+              },
+              onError: (error) {
+                print(error);
+              },
+            );
+
+            //todo 登录操作
+            print("$_username + $_password");
+          }
         },
       ),
     );

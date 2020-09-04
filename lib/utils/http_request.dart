@@ -37,9 +37,9 @@ class DioUtils {
           onSuccess(response.data);
         }
       }
-      // print("response$response");
+      print('响应数据：' + response.toString());
     } catch (e) {
-      print(e);
+      print('请求出错：' + e.toString());
       onError(e.toString());
     }
   }
@@ -107,7 +107,6 @@ class DioUtils {
     //请求结果
     var result;
     try {
-      print('-----------' + url);
       Response response = await dio.request(url,
           data: parameters, options: new Options(method: method));
       result = response.data;
@@ -132,15 +131,13 @@ class DioUtils {
     if (dio == null) {
       /// 全局属性：请求前缀、连接超时时间、响应超时时间
       var options = BaseOptions(
-        connectTimeout: CONNECT_TIMEOUT,
-        receiveTimeout: RECEIVE_TIMEOUT,
-        responseType: ResponseType.plain,
-        validateStatus: (status) {
-          // 不使用http状态码判断状态，使用AdapterInterceptor来处理（适用于标准REST风格）
-          return true;
-        },
-        baseUrl: "http://poetry.huhustory.com/",
-      );
+          connectTimeout: CONNECT_TIMEOUT,
+          receiveTimeout: RECEIVE_TIMEOUT,
+          responseType: ResponseType.plain,
+          validateStatus: (status) {
+            // 不使用http状态码判断状态，使用AdapterInterceptor来处理（适用于标准REST风格）
+            return true;
+          });
 
       dio = new Dio(options);
     }
