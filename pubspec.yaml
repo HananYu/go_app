@@ -35,6 +35,9 @@ dependencies:
   dio: ^3.0.10
   # 提示
   toast: ^0.1.5
+  #判断网络情况
+  connectivity: ^0.4.9
+
 
 dev_dependencies:
   flutter_test:

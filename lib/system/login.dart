@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:app/utils/http_request.dart';
@@ -31,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     _focusNodePassWord.addListener(_focusNodeListener);
     //监听用户名框的输入改变
     _userNameController.addListener(() {
-      print(_userNameController.text);
+      // print(_userNameController.text);
 
       // 监听文本框输入变化，当有内容的时候，显示尾部清除按钮，否则不显示
       if (_userNameController.text.length > 0) {
@@ -72,12 +73,17 @@ class _LoginPageState extends State<LoginPage> {
    */
   String validateUserName(value) {
     // 正则匹配手机号
-    RegExp exp = RegExp(
-        r'^((13[0-9])|(14[0-9])|(15[0-9])|(16[0-9])|(17[0-9])|(18[0-9])|(19[0-9]))\d{8}$');
+    // RegExp exp = RegExp(
+    //     r'^((13[0-9])|(14[0-9])|(15[0-9])|(16[0-9])|(17[0-9])|(18[0-9])|(19[0-9]))\d{8}$');
+    // if (value.isEmpty) {
+    //   return '用户名不能为空!';
+    // } else if (!exp.hasMatch(value)) {
+    //   return '请输入正确手机号';
+    // }
     if (value.isEmpty) {
       return '用户名不能为空!';
-    } else if (!exp.hasMatch(value)) {
-      return '请输入正确手机号';
+    } else if (value.length <= 3) {
+      return '用户名错误!';
     }
     return null;
   }
@@ -129,6 +135,7 @@ class _LoginPageState extends State<LoginPage> {
               focusNode: _focusNodeUserName,
               //设置键盘类型
               keyboardType: TextInputType.number,
+              style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: "用户名",
                 labelStyle: TextStyle(color: Colors.white),
@@ -161,6 +168,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             new TextFormField(
               focusNode: _focusNodePassWord,
+              style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
                   labelText: "密码",
                   labelStyle: TextStyle(color: Colors.white),
@@ -218,19 +226,22 @@ class _LoginPageState extends State<LoginPage> {
           if (_formKey.currentState.validate()) {
             //只有输入通过验证，才会执行这里
             _formKey.currentState.save();
-
-            DioUtils.postHttp(
+            HttpRequest.postRequest(
               "/api/basic/login",
+              params: {
+                "account": _username.trim(),
+                "password": _password.trim()
+              },
               onSuccess: (data) {
                 Toast.show(data["msg"], context);
               },
               onError: (error) {
-                print(error);
+                Toast.show(error, context);
               },
             );
 
             //todo 登录操作
-            print("$_username + $_password");
+            // print("$_username + $_password");
           }
         },
       ),
